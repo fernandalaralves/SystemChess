@@ -1,0 +1,11 @@
+br/com/systemchess/model/Partida$1.class
+br/com/systemchess/controller/TorneioController.class
+br/com/systemchess/model/Rodada.class
+br/com/systemchess/service/TorneioService.class
+br/com/systemchess/App.class
+br/com/systemchess/model/Partida.class
+br/com/systemchess/model/Jogador.class
+br/com/systemchess/model/Resultado.class
+br/com/systemchess/server/WebServer.class
+br/com/systemchess/util/Json.class
+br/com/systemchess/model/Torneio.class

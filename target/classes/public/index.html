@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SystemChess</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <main class="layout">
+        <section class="arena">
+            <div class="topo">
+                <div>
+                    <p class="marca">SystemChess</p>
+                    <h1 id="nomeTorneio">Torneio</h1>
+                </div>
+                <div class="acoes">
+                    <button id="gerarRodada" type="button">Nova rodada</button>
+                    <button id="reiniciar" class="secundario" type="button">Reiniciar</button>
+                </div>
+            </div>
+
+            <div class="tabuleiro" aria-label="tabuleiro decorativo de xadrez">
+                <div>♜</div><div></div><div>♞</div><div></div><div>♝</div><div></div><div>♛</div><div></div>
+                <div></div><div>♟</div><div></div><div>♟</div><div></div><div>♟</div><div></div><div>♟</div>
+                <div>♙</div><div></div><div>♘</div><div></div><div></div><div></div><div>♙</div><div></div>
+                <div></div><div></div><div></div><div>♔</div><div></div><div></div><div></div><div></div>
+                <div></div><div></div><div></div><div></div><div>♚</div><div></div><div></div><div></div>
+                <div></div><div>♙</div><div></div><div></div><div></div><div>♗</div><div></div><div>♙</div>
+                <div>♟</div><div></div><div>♟</div><div></div><div>♟</div><div></div><div>♟</div><div></div>
+                <div></div><div>♖</div><div></div><div>♕</div><div></div><div>♘</div><div></div><div>♖</div>
+            </div>
+        </section>
+
+        <aside class="painel">
+            <form id="formJogador" class="formulario">
+                <label>
+                    Nome
+                    <input id="nome" name="nome" type="text" maxlength="40" required>
+                </label>
+                <label>
+                    Rating
+                    <input id="rating" name="rating" type="number" min="100" max="3500" value="1500" required>
+                </label>
+                <button type="submit">Cadastrar</button>
+            </form>
+
+            <div id="mensagem" class="mensagem" role="status"></div>
+
+            <section class="bloco">
+                <h2>Ranking</h2>
+                <div id="ranking" class="lista"></div>
+            </section>
+
+            <section class="bloco">
+                <h2>Rodadas</h2>
+                <div id="rodadas" class="rodadas"></div>
+            </section>
+        </aside>
+    </main>
+
+    <script src="/app.js"></script>
+</body>
+</html>

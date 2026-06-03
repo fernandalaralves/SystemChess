@@ -63,9 +63,10 @@ public final class Jogador {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof Jogador jogador)) {
+        if (!(object instanceof Jogador)) {
             return false;
         }
+        Jogador jogador = (Jogador) object;
         return id == jogador.id;
     }
 

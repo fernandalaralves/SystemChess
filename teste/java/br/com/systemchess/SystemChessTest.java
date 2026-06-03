@@ -6,110 +6,131 @@ import br.com.systemchess.model.Resultado;
 import br.com.systemchess.model.Rodada;
 import br.com.systemchess.service.TorneioService;
 import br.com.systemchess.util.Json;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
-public final class SystemChessTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    private int executados;
+final class SystemChessTest {
 
-    public static void main(String[] args) {
-        SystemChessTest suite = new SystemChessTest();
-        suite.deveCadastrarJogadorValido();
-        suite.naoDevePermitirNomeVazio();
-        suite.naoDevePermitirRatingForaDaFaixa();
-        suite.naoDeveCadastrarNomeDuplicado();
-        suite.deveGerarRodadaComPartidas();
-        suite.deveRegistrarVitoriaDasBrancas();
-        suite.deveRegistrarEmpate();
-        suite.naoDeveRegistrarResultadoDuasVezes();
-        suite.naoDeveGerarNovaRodadaComRodadaAberta();
-        suite.deveAtribuirByeQuandoNumeroImpar();
-        suite.deveOrdenarRankingPorPontosRatingENome();
-        suite.deveConverterJsonSimples();
-        System.out.println("Testes executados: " + suite.executados);
-    }
-
+    @Test
     void deveCadastrarJogadorValido() {
-        Jogador jogador = new Jogador(1, "Fernanda", 1500);
-        igual("Fernanda", jogador.getNome());
-        igual(1500, jogador.getRating());
+        Jogador jogador = new Jogador(1, " Fernanda ", 1500);
+
+        assertEquals("Fernanda", jogador.getNome());
+        assertEquals(1500, jogador.getRating());
     }
 
-    void naoDevePermitirNomeVazio() {
-        erro(IllegalArgumentException.class, () -> new Jogador(1, " ", 1500));
+    @Test
+    void deveRejeitarDadosInvalidosDoJogador() {
+        assertThrows(IllegalArgumentException.class, () -> new Jogador(0, "Ana", 1500));
+        assertThrows(IllegalArgumentException.class, () -> new Jogador(1, " ", 1500));
+        assertThrows(IllegalArgumentException.class, () -> new Jogador(1, "Ana", 99));
+        assertThrows(IllegalArgumentException.class, () -> new Jogador(1, "Ana", 3501));
     }
 
-    void naoDevePermitirRatingForaDaFaixa() {
-        erro(IllegalArgumentException.class, () -> new Jogador(1, "Ana", 99));
-        erro(IllegalArgumentException.class, () -> new Jogador(1, "Ana", 3501));
-    }
-
+    @Test
     void naoDeveCadastrarNomeDuplicado() {
         TorneioService service = new TorneioService("Teste");
+
         service.cadastrarJogador("Ana", 1400);
-        erro(IllegalArgumentException.class, () -> service.cadastrarJogador("ana", 1500));
+
+        assertThrows(IllegalArgumentException.class, () -> service.cadastrarJogador("ana", 1500));
     }
 
+    @Test
     void deveGerarRodadaComPartidas() {
         TorneioService service = torneioComQuatroJogadores();
+
         Rodada rodada = service.gerarRodada();
-        igual(1, rodada.getNumero());
-        igual(2, rodada.getPartidas().size());
+
+        assertEquals(1, rodada.getNumero());
+        assertEquals(2, rodada.getPartidas().size());
+        assertRegex("\\{\"numero\":1,\"concluida\":false,\"bye\":null,\"partidas\":\\[.+]}", Json.rodada(rodada));
     }
 
+    @Test
     void deveRegistrarVitoriaDasBrancas() {
         TorneioService service = torneioComQuatroJogadores();
         Partida partida = service.gerarRodada().getPartidas().get(0);
+
         service.registrarResultado(partida.getId(), Resultado.VITORIA_BRANCAS);
-        igual(1.0, partida.getBrancas().getPontuacao());
-        igual(0.0, partida.getPretas().getPontuacao());
+
+        assertEquals(1.0, partida.getBrancas().getPontuacao());
+        assertEquals(0.0, partida.getPretas().getPontuacao());
+        assertRegex("\"resultado\":\"VITORIA_BRANCAS\"", Json.partida(partida));
     }
 
+    @Test
     void deveRegistrarEmpate() {
         TorneioService service = torneioComQuatroJogadores();
         Partida partida = service.gerarRodada().getPartidas().get(0);
+
         service.registrarResultado(partida.getId(), Resultado.EMPATE);
-        igual(0.5, partida.getBrancas().getPontuacao());
-        igual(0.5, partida.getPretas().getPontuacao());
+
+        assertEquals(0.5, partida.getBrancas().getPontuacao());
+        assertEquals(0.5, partida.getPretas().getPontuacao());
     }
 
+    @Test
     void naoDeveRegistrarResultadoDuasVezes() {
         TorneioService service = torneioComQuatroJogadores();
         Partida partida = service.gerarRodada().getPartidas().get(0);
+
         service.registrarResultado(partida.getId(), Resultado.VITORIA_PRETAS);
-        erro(IllegalStateException.class, () -> service.registrarResultado(partida.getId(), Resultado.EMPATE));
+
+        assertThrows(IllegalStateException.class, () -> service.registrarResultado(partida.getId(), Resultado.EMPATE));
     }
 
+    @Test
     void naoDeveGerarNovaRodadaComRodadaAberta() {
         TorneioService service = torneioComQuatroJogadores();
+
         service.gerarRodada();
-        erro(IllegalStateException.class, service::gerarRodada);
+
+        assertThrows(IllegalStateException.class, service::gerarRodada);
     }
 
+    @Test
     void deveAtribuirByeQuandoNumeroImpar() {
         TorneioService service = new TorneioService("Teste");
         service.cadastrarJogador("Ana", 1500);
         service.cadastrarJogador("Bia", 1600);
         service.cadastrarJogador("Caio", 1400);
+
         Rodada rodada = service.gerarRodada();
-        verdadeiro(rodada.getBye() != null);
-        igual(1.0, rodada.getBye().getPontuacao());
+
+        assertNotNull(rodada.getBye());
+        assertEquals(1.0, rodada.getBye().getPontuacao());
+        assertRegex("\"bye\":\\{\"id\":\\d+,\"nome\":\"Caio\",\"rating\":1400,\"pontuacao\":1\\.0,\"byes\":1}", Json.rodada(rodada));
     }
 
+    @Test
     void deveOrdenarRankingPorPontosRatingENome() {
         TorneioService service = torneioComQuatroJogadores();
         Rodada rodada = service.gerarRodada();
-        for (Partida partida : rodada.getPartidas()) {
-            service.registrarResultado(partida.getId(), Resultado.EMPATE);
-        }
-        igual("Diana", service.gerarRanking().get(0).getNome());
+        rodada.getPartidas().forEach(partida -> service.registrarResultado(partida.getId(), Resultado.EMPATE));
+
+        assertEquals("Diana", service.gerarRanking().get(0).getNome());
     }
 
+    @Test
     void deveConverterJsonSimples() {
         Map<String, String> dados = Json.objeto("{\"nome\":\"Ana\",\"rating\":1500}");
-        igual("Ana", dados.get("nome"));
-        igual(1500, Json.inteiro(dados, "rating"));
+
+        assertEquals("Ana", dados.get("nome"));
+        assertEquals(1500, Json.inteiro(dados, "rating"));
+    }
+
+    @Test
+    void deveSerializarMensagensNoContratoJson() {
+        assertRegex("\\{\"status\":\"Torneio iniciado\"\\}", Json.mensagem("Torneio iniciado"));
+        assertRegex("\\{\"erro\":\"Nome .*\"\\}", Json.erro("Nome \"invalido\""));
     }
 
     private TorneioService torneioComQuatroJogadores() {
@@ -121,35 +142,7 @@ public final class SystemChessTest {
         return service;
     }
 
-    private void verdadeiro(boolean condicao) {
-        executados++;
-        if (!condicao) {
-            throw new AssertionError("Condicao esperada nao foi atendida");
-        }
-    }
-
-    private void igual(Object esperado, Object obtido) {
-        executados++;
-        if (!esperado.equals(obtido)) {
-            throw new AssertionError("Esperado " + esperado + ", obtido " + obtido);
-        }
-    }
-
-    private void erro(Class<? extends Throwable> tipo, Acao acao) {
-        executados++;
-        try {
-            acao.executar();
-        } catch (Throwable ex) {
-            if (tipo.isInstance(ex)) {
-                return;
-            }
-            throw new AssertionError("Excecao esperada " + tipo.getSimpleName() + ", obtida " + ex.getClass().getSimpleName());
-        }
-        throw new AssertionError("Excecao esperada " + tipo.getSimpleName());
-    }
-
-    @FunctionalInterface
-    interface Acao {
-        void executar();
+    private void assertRegex(String regex, String texto) {
+        assertTrue(Pattern.compile(regex).matcher(texto).find(), () -> "Texto nao corresponde ao regex: " + texto);
     }
 }

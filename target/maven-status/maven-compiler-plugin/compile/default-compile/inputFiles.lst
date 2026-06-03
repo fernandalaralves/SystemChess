@@ -1,0 +1,10 @@
+/workspaces/SystemChess/src/main/java/br/com/systemchess/model/Partida.java
+/workspaces/SystemChess/src/main/java/br/com/systemchess/model/Resultado.java
+/workspaces/SystemChess/src/main/java/br/com/systemchess/service/TorneioService.java
+/workspaces/SystemChess/src/main/java/br/com/systemchess/model/Rodada.java
+/workspaces/SystemChess/src/main/java/br/com/systemchess/model/Torneio.java
+/workspaces/SystemChess/src/main/java/br/com/systemchess/controller/TorneioController.java
+/workspaces/SystemChess/src/main/java/br/com/systemchess/model/Jogador.java
+/workspaces/SystemChess/src/main/java/br/com/systemchess/App.java
+/workspaces/SystemChess/src/main/java/br/com/systemchess/util/Json.java
+/workspaces/SystemChess/src/main/java/br/com/systemchess/server/WebServer.java

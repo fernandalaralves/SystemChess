@@ -60,9 +60,9 @@ public final class Json {
     public static String torneio(Torneio torneio, List<Jogador> ranking) {
         return "{"
                 + "\"nome\":\"" + escapar(torneio.getNome()) + "\","
-                + "\"jogadores\":" + lista(torneio.getJogadores().stream().map(Json::jogador).toList()) + ","
-                + "\"ranking\":" + lista(ranking.stream().map(Json::jogador).toList()) + ","
-                + "\"rodadas\":" + lista(torneio.getRodadas().stream().map(Json::rodada).toList())
+                + "\"jogadores\":" + lista(torneio.getJogadores().stream().map(Json::jogador).collect(Collectors.toList())) + ","
+                + "\"ranking\":" + lista(ranking.stream().map(Json::jogador).collect(Collectors.toList())) + ","
+                + "\"rodadas\":" + lista(torneio.getRodadas().stream().map(Json::rodada).collect(Collectors.toList()))
                 + "}";
     }
 
@@ -82,7 +82,7 @@ public final class Json {
                 + "\"numero\":" + rodada.getNumero() + ","
                 + "\"concluida\":" + rodada.estaConcluida() + ","
                 + "\"bye\":" + bye + ","
-                + "\"partidas\":" + lista(rodada.getPartidas().stream().map(Json::partida).toList())
+                + "\"partidas\":" + lista(rodada.getPartidas().stream().map(Json::partida).collect(Collectors.toList()))
                 + "}";
     }
 

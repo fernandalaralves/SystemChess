@@ -34,12 +34,16 @@ public final class Partida {
         this.resultado = resultado;
 
         switch (resultado) {
-            case VITORIA_BRANCAS -> brancas.adicionarPontos(1);
-            case VITORIA_PRETAS -> pretas.adicionarPontos(1);
-            case EMPATE -> {
+            case VITORIA_BRANCAS:
+                brancas.adicionarPontos(1);
+                break;
+            case VITORIA_PRETAS:
+                pretas.adicionarPontos(1);
+                break;
+            case EMPATE:
                 brancas.adicionarPontos(0.5);
                 pretas.adicionarPontos(0.5);
-            }
+                break;
         }
     }
 
